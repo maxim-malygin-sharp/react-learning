@@ -1,5 +1,23 @@
-import React from 'react'
+import React, {createContext, useContext, useReducer} from 'react';
+import { StateProvider, StateContext } from './state';
+import userReducer from './reducers/user';
+import basketReducer from './reducers/basket';
 
+const mainReducer = ({ user, basket }, action) => {
+  
+  return {
+  user: userReducer(user, action),
+  basket: basketReducer(basket, action)
+}};
+
+const reducer = (state, action) => {
+  switch (action.type) {
+    case 'increment':
+      return { count: state.count + 1 };
+    default:
+      return state;
+  }
+};
 
 class App1 extends React.Component {
     constructor() {
@@ -8,6 +26,14 @@ class App1 extends React.Component {
           name: "test"
         };
     }
+    Increment({ initialCount }) {
+      const [state, dispatch] = useReducer(reducer, { count: 0 });
+      return (
+        <button onClick={() => dispatch({ type: 'increment'})}>
+          Increment: {state.count}
+        </button>
+      );
+    } 
 
   render() {
     return <div>
@@ -97,6 +123,7 @@ class Child extends React.Component {
         return <h1>Something went wrong.</h1>;
     }
     return (
+      <div>
       <h3>
         The value passed from parent is {this.props.value}
         <div>
@@ -109,6 +136,11 @@ class Child extends React.Component {
             <button onClick={this.handleDecrement}>Decrement by 1</button>
         </div>
       </h3>
+            
+        <ThemeContext.Provider value={{ primaryColor: green }}>
+        {props.children}
+      </ThemeContext.Provider>
+      </div>
     );
   }
 }
